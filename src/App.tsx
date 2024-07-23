@@ -1,7 +1,8 @@
 import React from 'react';
 import './App.css';
-import Navbar from './app/components/Navbar/Navbar';
+import { useSelector } from 'react-redux';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import Navbar from './app/components/Navbar/Navbar';
 import HomePage from './app/pages/HomePage/HomePage';
 import AboutPage from './app/pages/AboutPage/AboutPage';
 import AnalyticsPage from './app/pages/AnalyticsPage/AnalyticsPage';
@@ -10,7 +11,6 @@ import LoginPage from './app/pages/LogInPage/LoginPage';
 
 import { Routs } from './app/components/Navbar/Routs';
 import ProtectedRoute from './app/components/ProtectedRoute/ProtectedRoute';
-import { useSelector } from 'react-redux';
 import { RootState } from './store/store'; // adjust the import path as needed
 
 
@@ -37,6 +37,7 @@ function App() {
           <Route path={`/${Routs.MakeAppointment}`} element={<ScheduleAnAppointmentPage />} />
           <Route path={`/${Routs.Login}`} element={<LoginPage />} />
           <Route path="*" element={<Navigate to={`/${Routs.MakeAppointment}`} />} />
+          <Route path="LogOut" element={<Navigate to={`/${Routs.Login}`} />} />
 
         </Routes>
       </main>
