@@ -1,6 +1,5 @@
-import styled from 'styled-components';
-import { Box } from '@mui/material';
-
+import styled from "styled-components";
+import { Box } from "@mui/material";
 
 export const Container = styled(Box)`
   display: flex;
@@ -49,9 +48,9 @@ export const TimeSlotGrid = styled(Box)`
 `;
 
 export const SchedulePageContainer = styled(Box)`
-max-width: 100vw;
-overflow-x: hidden;
-margin: 10px;
+  max-width: 100vw;
+  overflow-x: hidden;
+  margin: 10px;
 `;
 
 export const SubmitButtonContainer = styled(Box)`

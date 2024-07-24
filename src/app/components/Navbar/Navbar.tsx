@@ -1,4 +1,4 @@
-import { ReactNode, useMemo, useState } from "react";
+import React, { ReactNode, useMemo, useState } from "react";
 import {
   AiOutlineMenu,
   AiOutlineClose,
@@ -54,25 +54,25 @@ const Navbar = () => {
   const renderLink = (
     link: { to: Routs; label: string },
     childElement: ReactNode
-  ) => {
-    return (
-      <Link
-        to={link.to}
-        key={link.to}
-        onClick={() => handleLinkClick(link.to)}
-        style={{ textDecoration: "none", color: "black" }}
-      >
-        {childElement}
-      </Link>
-    );
-  };
-  const filteredLinks = useMemo(() => {
-    return Links.filter(
-      (link) =>
-        !(link.to === Routs.Login && isAuthenticated) &&
-        !(link.to === Routs.LogOut && !isAuthenticated)
-    );
-  }, [isAuthenticated]);
+  ) => (
+    <Link
+      to={link.to}
+      key={link.to}
+      onClick={() => handleLinkClick(link.to)}
+      style={{ textDecoration: "none", color: "black" }}
+    >
+      {childElement}
+    </Link>
+  );
+  const filteredLinks = useMemo(
+    () =>
+      Links.filter(
+        (link) =>
+          !(link.to === Routs.Login && isAuthenticated) &&
+          !(link.to === Routs.LogOut && !isAuthenticated)
+      ),
+    [isAuthenticated]
+  );
 
   return (
     <Nav>

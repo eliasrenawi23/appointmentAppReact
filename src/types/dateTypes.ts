@@ -1,6 +1,6 @@
-import { Dayjs } from 'dayjs';
+import { Dayjs } from "dayjs";
 
 export interface DateState {
-    selectedDate: Dayjs | null;
-    selectedTime: Dayjs | null;
+  selectedDate: Dayjs | null;
+  selectedTime: Dayjs | null;
 }
