@@ -7,52 +7,65 @@ import {
   Typography,
   IconButton,
   InputAdornment,
+  CircularProgress,
 } from "@mui/material";
-
 import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useFormik } from "formik";
 import { LoginForm } from "./style";
 import { login } from "../../../store/authSlice";
+import { validationSchema } from "../../Validation/userValidation";
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    dispatch(
-      login({
-        username,
-        password,
-      })
-    );
-    navigate("/analytics"); // Redirect to Analytics page
-  };
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: (values, { setSubmitting }) => {
+      setLoading(true);
+      dispatch(login(values));
+      setLoading(false);
+      setSubmitting(false);
+      navigate("/analytics"); // Redirect to Analytics page
+    },
+  });
+
   return (
-    <LoginForm>
+    <LoginForm onSubmit={formik.handleSubmit}>
       <Container>
         <Typography variant="h4">Login</Typography>
         <TextField
           id="username"
-          label="username"
-          placeholder="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          name="username"
+          label="Username"
+          placeholder="Username"
+          value={formik.values.username}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.username && Boolean(formik.errors.username)}
+          helperText={formik.touched.username && formik.errors.username}
           fullWidth
           margin="normal"
         />
         <TextField
           id="password"
+          name="password"
           type={showPassword ? "text" : "password"}
           placeholder="Password"
           label="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.password && Boolean(formik.errors.password)}
+          helperText={formik.touched.password && formik.errors.password}
           fullWidth
           margin="normal"
           InputProps={{
@@ -60,7 +73,7 @@ const LoginPage = () => {
               <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
+                  onClick={() => setShowPassword(!showPassword)}
                   edge="end"
                 >
                   {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -69,8 +82,14 @@ const LoginPage = () => {
             ),
           }}
         />
-        <Button variant="contained" color="primary" onClick={handleLogin}>
-          Login
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          disabled={loading || formik.isSubmitting}
+          fullWidth
+        >
+          {loading ? <CircularProgress size={24} /> : "Login"}
         </Button>
       </Container>
     </LoginForm>
