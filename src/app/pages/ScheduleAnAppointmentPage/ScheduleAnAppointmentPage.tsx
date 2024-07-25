@@ -13,8 +13,11 @@ import {
   SubmitButtonContainer,
 } from "./styles";
 import { shouldDisableDate, isTimeOccupied } from "./staticData";
+import MakeAppointmentDialog from "../../components/MakeAppointmentDialog/MakeAppointmentDialog";
 
 const AppointmentScheduler = () => {
+  const [open, setOpen] = useState(false);
+
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
     dayjs().add(1, "day")
   );
@@ -39,14 +42,7 @@ const AppointmentScheduler = () => {
   };
 
   const handleAppointmentSubmit = () => {
-    if (selectedDate && selectedTime) {
-      alert(
-        `Appointment made for ${selectedDate.format("DD/MM/YYYY")} at ${selectedTime.format("HH:mm")}`
-      );
-      // Add further logic to handle the appointment submission (e.g., API call)
-    } else {
-      alert("Please select both a date and a time.");
-    }
+    if (selectedDate && selectedTime) setOpen(true);
   };
 
   const isMobile = window.innerWidth <= 600;
@@ -108,6 +104,13 @@ const AppointmentScheduler = () => {
           </Button>
         </SubmitButtonContainer>
       </LocalizationProvider>
+
+      <MakeAppointmentDialog
+        open={open}
+        setOpen={setOpen}
+        date={selectedDate}
+        time={selectedTime}
+      />
     </SchedulePageContainer>
   );
 };

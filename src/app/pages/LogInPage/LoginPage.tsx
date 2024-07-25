@@ -14,7 +14,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useFormik } from "formik";
 import { LoginForm } from "./style";
 import { login } from "../../../store/authSlice";
-import { validationSchema } from "../../Validation/userValidation";
+import { userValidationSchema } from "../../Validation/validation";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,7 +28,7 @@ const LoginPage = () => {
       username: "",
       password: "",
     },
-    validationSchema,
+    validationSchema: userValidationSchema,
     onSubmit: (values, { setSubmitting }) => {
       setLoading(true);
       dispatch(login(values));
