@@ -19,13 +19,19 @@ export const appointmentValidationSchema = yup.object({
   date: yup
     .string()
     .required("Date is required")
-    .test("is-valid-date", "Invalid date format", (value) =>
-      value ? dayjs(value, "DD/MM/YYYY", true).isValid() : false
+    .test(
+      "is-valid-date",
+      "Invalid date format",
+      (value: string | number | Date | dayjs.Dayjs | null | undefined) =>
+        value ? dayjs(value, "DD/MM/YYYY", true).isValid() : false
     ),
   time: yup
     .string()
     .required("Time is required")
-    .test("is-valid-time", "Invalid time format", (value) =>
-      value ? dayjs(value, "HH:mm", true).isValid() : false
+    .test(
+      "is-valid-time",
+      "Invalid time format",
+      (value: string | number | Date | dayjs.Dayjs | null | undefined) =>
+        value ? dayjs(value, "HH:mm", true).isValid() : false
     ),
 });
