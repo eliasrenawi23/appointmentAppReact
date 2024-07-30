@@ -1,30 +1,29 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
 import { Dayjs } from 'dayjs';
 import { useFormik } from 'formik';
 import { appointmentValidationSchema } from '../../Validation/validation';
+import { Appointment, TimeSlotsType } from '../../../types/dateTypes';
 
 interface MakeAppointmentDialogProps {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    time: Dayjs | null;
-    date: Dayjs | null;
+    time: TimeSlotsType;
+    date: Dayjs;
 }
 
-const MakeAppointmentDialog = (props: MakeAppointmentDialogProps) => {
-    const { open, setOpen, time, date } = props;
-
-    const formik = useFormik({
+const MakeAppointmentDialog: FC<MakeAppointmentDialogProps> = ({ open, setOpen, time, date }) => {
+    const formik = useFormik<Appointment>({
         initialValues: {
             name: '',
-            phone: '',
-            date: date ? date.format('DD/MM/YYYY') : '',
-            time: time ? time.format('HH:mm') : '',
+            phoneNumber: '',
+            date: date.format('DD/MM/YYYY'),
+            time,
         },
 
         validationSchema: appointmentValidationSchema,
         onSubmit: () => {
-            alert(formik.values);
+            console.log(formik.values);
             setOpen(false);
         },
     });
@@ -37,7 +36,7 @@ const MakeAppointmentDialog = (props: MakeAppointmentDialogProps) => {
                     <DialogContent>
                         {date && time && (
                             <DialogContentText>
-                                Appointment made for {date.format('DD/MM/YYYY')} at {time.format('HH:mm')}
+                                Appointment made for {date.format('DD/MM/YYYY')} at {time}
                             </DialogContentText>
                         )}
                         <TextField
@@ -65,11 +64,11 @@ const MakeAppointmentDialog = (props: MakeAppointmentDialogProps) => {
                             type="text"
                             fullWidth
                             variant="standard"
-                            value={formik.values.phone}
+                            value={formik.values.phoneNumber}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            error={formik.touched.phone && Boolean(formik.errors.phone)}
-                            helperText={formik.touched.phone && formik.errors.phone}
+                            error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
+                            helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
                         />
                     </DialogContent>
                     <DialogActions>

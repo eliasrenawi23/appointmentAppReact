@@ -46,6 +46,7 @@ const LoginPage = () => {
                     error={formik.touched.username && Boolean(formik.errors.username)}
                     helperText={formik.touched.username && formik.errors.username}
                     fullWidth
+                    autoComplete="username"
                     margin="normal"
                 />
                 <TextField
@@ -61,6 +62,7 @@ const LoginPage = () => {
                     helperText={formik.touched.password && formik.errors.password}
                     fullWidth
                     margin="normal"
+                    autoComplete="current-password"
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">

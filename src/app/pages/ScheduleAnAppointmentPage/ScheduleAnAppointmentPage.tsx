@@ -14,27 +14,20 @@ import {
 } from './styles';
 import { shouldDisableDate, isTimeOccupied } from './staticData';
 import MakeAppointmentDialog from '../../components/MakeAppointmentDialog/MakeAppointmentDialog';
+import { TimeSlotsType, timeSlots } from '../../../types/dateTypes';
 
 const AppointmentScheduler = () => {
     const [open, setOpen] = useState(false);
 
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs().add(1, 'day'));
-    const [selectedTime, setSelectedTime] = useState<Dayjs | null>(null);
+    const [selectedTime, setSelectedTime] = useState<TimeSlotsType | null>(null);
 
     const handleDateChange = (date: Dayjs | null) => {
         setSelectedDate(date);
         setSelectedTime(null); // Reset the selected time when the date changes
     };
 
-    const timeSlots = [];
-    // eslint-disable-next-line no-plusplus
-    for (let hour = 11; hour < 18; hour++) {
-        if (hour === 14) continue; // Skip the hour from 14:00 to 15:00
-        timeSlots.push(dayjs(selectedDate).hour(hour).minute(0));
-        timeSlots.push(dayjs(selectedDate).hour(hour).minute(30));
-    }
-
-    const handleTimeSlotClick = (time: Dayjs) => {
+    const handleTimeSlotClick = (time: TimeSlotsType) => {
         setSelectedTime(time);
     };
 
@@ -69,17 +62,17 @@ const AppointmentScheduler = () => {
                             {timeSlots.map((time) => (
                                 <Button
                                     key={time.toString()}
-                                    variant={selectedTime && selectedTime.isSame(time) ? 'contained' : 'outlined'}
+                                    variant={selectedTime && selectedTime.match(time) ? 'contained' : 'outlined'}
                                     onClick={() => handleTimeSlotClick(time)}
                                     disabled={isTimeOccupied(selectedDate!, time)}
                                 >
-                                    {time.format('HH:mm')}
+                                    {time}
                                 </Button>
                             ))}
                         </TimeSlotGrid>
                         {selectedTime && selectedDate && (
                             <Typography variant="body1" sx={{ mt: 2 }}>
-                                Selected Time and Date: {selectedTime.format('HH:mm')}
+                                Selected Time and Date: {selectedTime}
                                 {'  '}
                                 {selectedDate.format('DD/MM/YYYY')}
                             </Typography>
@@ -98,7 +91,14 @@ const AppointmentScheduler = () => {
                 </SubmitButtonContainer>
             </LocalizationProvider>
 
-            <MakeAppointmentDialog open={open} setOpen={setOpen} date={selectedDate} time={selectedTime} />
+            {selectedDate && selectedTime && (
+                <MakeAppointmentDialog
+                    open={open}
+                    setOpen={setOpen}
+                    date={selectedDate as Dayjs}
+                    time={selectedTime as TimeSlotsType}
+                />
+            )}
         </SchedulePageContainer>
     );
 };

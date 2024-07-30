@@ -28,7 +28,6 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
-
                     <Route
                         path={`/${Routs.Analytics}`}
                         element={
