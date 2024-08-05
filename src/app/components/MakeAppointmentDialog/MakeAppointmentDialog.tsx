@@ -23,6 +23,7 @@ const MakeAppointmentDialog: FC<MakeAppointmentDialogProps> = ({ open, setOpen, 
 
         validationSchema: appointmentValidationSchema,
         onSubmit: () => {
+            // eslint-disable-next-line no-console
             console.log(formik.values);
             setOpen(false);
         },

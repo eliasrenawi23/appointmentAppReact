@@ -18,7 +18,15 @@ export const timeSlots = [
 export type TimeSlotsType = (typeof timeSlots)[number];
 export interface Appointment {
     date: Dayjs | string;
-    time: Dayjs | TimeSlotsType;
+    time: Dayjs | TimeSlotsType[number];
+    name: string;
+    phoneNumber: string;
+}
+
+export interface RangePayload {
+    startDate: Dayjs | string;
+    endDate: Dayjs | string;
+    times: Dayjs[] | TimeSlotsType[];
     name: string;
     phoneNumber: string;
 }

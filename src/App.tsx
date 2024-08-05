@@ -11,6 +11,7 @@ import LoginPage from './app/pages/LogInPage/LoginPage';
 import { Routs } from './app/components/Navbar/Routs';
 import ProtectedRoute from './app/components/ProtectedRoute/ProtectedRoute';
 import { RootState } from './store/store'; // adjust the import path as needed
+import AdminScheduleManager from './app/pages/AdminScheduleManager/AdminScheduleManager';
 
 function App() {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -33,6 +34,14 @@ function App() {
                         element={
                             <ProtectedRoute user={user}>
                                 <AnalyticsPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={`/${Routs.AdminScheduleManager}`}
+                        element={
+                            <ProtectedRoute user={user}>
+                                <AdminScheduleManager />
                             </ProtectedRoute>
                         }
                     />

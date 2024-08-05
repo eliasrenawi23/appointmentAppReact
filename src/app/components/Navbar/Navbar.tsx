@@ -60,7 +60,9 @@ const Navbar = () => {
         () =>
             Links.filter(
                 (link) =>
-                    !(link.to === Routs.Login && isAuthenticated) && !(link.to === Routs.LogOut && !isAuthenticated),
+                    !(link.to === Routs.Login && isAuthenticated) &&
+                    !(link.to === Routs.LogOut && !isAuthenticated) &&
+                    !(link.to === Routs.AdminScheduleManager && !isAuthenticated),
             ),
         [isAuthenticated],
     );
