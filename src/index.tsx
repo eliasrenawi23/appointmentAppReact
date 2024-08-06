@@ -3,11 +3,14 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { enableMapSet } from 'immer';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './store/store';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+enableMapSet();
+
 root.render(
     <React.StrictMode>
         <Provider store={store}>

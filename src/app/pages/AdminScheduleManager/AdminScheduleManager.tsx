@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,6 +23,7 @@ import {
 const AdminScheduleManager: React.FC = () => {
     const dispatch = useDispatch();
     const appointments = useSelector((state: RootState) => state.occupiedTimes.Appointments);
+    const fulldate = useSelector((state: RootState) => state.occupiedTimes.fullyOccupiedDates);
 
     const [startDate, setStartDate] = useState<Dayjs | null>(null);
     const [endDate, setEndDate] = useState<Dayjs | null>(null);
@@ -66,8 +68,20 @@ const AdminScheduleManager: React.FC = () => {
             <h2>Manage Appointments</h2>
             <DateTimePickers>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DateTimePicker label="Start Date" disablePast value={startDate} onChange={handleStartDateChange} />
-                    <DateTimePicker label="End Date" disablePast value={endDate} onChange={handleEndDateChange} />
+                    <DateTimePicker
+                        label="Start Date"
+                        openTo="day"
+                        disablePast
+                        value={startDate}
+                        onChange={handleStartDateChange}
+                    />
+                    <DateTimePicker
+                        label="End Date"
+                        openTo="day"
+                        disablePast
+                        value={endDate}
+                        onChange={handleEndDateChange}
+                    />
                 </LocalizationProvider>
             </DateTimePickers>
             <TimeSlots>
@@ -91,10 +105,27 @@ const AdminScheduleManager: React.FC = () => {
             </Button>
             <h3>Existing Appointments:</h3>
             <AppointmentsList>
-                {appointments.map((appointment, index) => (
+                {/* {appointments.map((appointment, index) => (
                     <AppointmentItem key={index}>
                         {appointment.date.toString()} - {appointment.time.toString()}
                     </AppointmentItem>
+                ))} */}
+
+                {Array.from(appointments.entries()).map(([date, timesMap]) => (
+                    <div key={date}>
+                        <h3>Date: {date}</h3>
+                        <ul>
+                            {Array.from(timesMap.entries()).map(([time, details]) => (
+                                <li key={time}>
+                                    Time: {time}, Name: {details.name}, Phone Number: {details.phoneNumber}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+                <h3> Full Days</h3>
+                {Array.from(fulldate).map((day, index) => (
+                    <AppointmentItem key={index}>{day.toString()}</AppointmentItem>
                 ))}
             </AppointmentsList>
         </Container>

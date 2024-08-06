@@ -17,8 +17,8 @@ export const timeSlots = [
 
 export type TimeSlotsType = (typeof timeSlots)[number];
 export interface Appointment {
-    date: Dayjs | string;
-    time: Dayjs | TimeSlotsType[number];
+    date: string;
+    time: TimeSlotsType;
     name: string;
     phoneNumber: string;
 }
@@ -26,7 +26,16 @@ export interface Appointment {
 export interface RangePayload {
     startDate: Dayjs | string;
     endDate: Dayjs | string;
-    times: Dayjs[] | TimeSlotsType[];
+    times: TimeSlotsType[];
     name: string;
     phoneNumber: string;
+}
+
+export interface AppointmentsInRangeDetalis {
+    name: string;
+    phoneNumber: string;
+}
+export interface DateState {
+    Appointments: Map<string, Map<TimeSlotsType, AppointmentsInRangeDetalis>>; // map of a date as String and apoitment
+    fullyOccupiedDates: Set<string>;
 }

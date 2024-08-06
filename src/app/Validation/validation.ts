@@ -8,7 +8,7 @@ export const userValidationSchema = yup.object({
 
 export const appointmentValidationSchema = yup.object({
     name: yup.string().required('Name is required'),
-    phone: yup
+    phoneNumber: yup
         .string()
         .matches(/^[0-9]+$/, 'Phone number must be digits only')
         .min(10, 'Phone number must be at least 10 digits')

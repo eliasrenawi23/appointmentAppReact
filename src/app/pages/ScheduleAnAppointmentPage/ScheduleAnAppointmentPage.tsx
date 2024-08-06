@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-shadow */
+import React, { useEffect, useState } from 'react';
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Button, Typography } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
+import { useSelector } from 'react-redux';
 import {
     Container,
     CalendarContainer,
@@ -12,15 +15,43 @@ import {
     SchedulePageContainer,
     SubmitButtonContainer,
 } from './styles';
-import { shouldDisableDate, isTimeOccupied } from './staticData';
+import { isTimeOccupied } from './staticData';
 import MakeAppointmentDialog from '../../components/MakeAppointmentDialog/MakeAppointmentDialog';
 import { TimeSlotsType, timeSlots } from '../../../types/dateTypes';
+import { RootState } from '../../../store/store';
 
 const AppointmentScheduler = () => {
     const [open, setOpen] = useState(false);
-
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs().add(1, 'day'));
     const [selectedTime, setSelectedTime] = useState<TimeSlotsType | null>(null);
+
+    const appointments = useSelector((state: RootState) => state.occupiedTimes.Appointments); // must update
+    const fullDays = useSelector((state: RootState) => state.occupiedTimes.fullyOccupiedDates);
+
+    useEffect(() => {
+        console.log(fullDays);
+    }, []);
+
+    const isTimeOccupied = (date: Dayjs, time: TimeSlotsType): boolean => {
+        const timeAsDayjs = dayjs(time, 'HH:mm');
+        if (date.isSame(dayjs(), 'day') && timeAsDayjs.isBefore(dayjs(), 'minute')) {
+            return true;
+        }
+        const day = appointments.get(date.format('DD/MM/YYYY'));
+
+        if (day) {
+            return day.has(time);
+        }
+        return false;
+    };
+    const isDateOccupied = (date: Dayjs): boolean => fullDays.has(date.format('DD/MM/YYYY'));
+
+    const shouldDisableDate2 = (date: Dayjs): boolean => {
+        if (date.day() === 0) {
+            return true;
+        }
+        return isDateOccupied(date);
+    };
 
     const handleDateChange = (date: Dayjs | null) => {
         setSelectedDate(date);
@@ -48,7 +79,7 @@ const AppointmentScheduler = () => {
                             disablePast
                             value={selectedDate}
                             onChange={handleDateChange}
-                            shouldDisableDate={shouldDisableDate}
+                            shouldDisableDate={shouldDisableDate2}
                             slotProps={{
                                 actionBar: {
                                     actions: ['today'],

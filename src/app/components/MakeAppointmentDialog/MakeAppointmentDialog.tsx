@@ -2,8 +2,10 @@ import React, { FC } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
 import { Dayjs } from 'dayjs';
 import { useFormik } from 'formik';
+import { useDispatch } from 'react-redux';
 import { appointmentValidationSchema } from '../../Validation/validation';
 import { Appointment, TimeSlotsType } from '../../../types/dateTypes';
+import { addSingleAppointment } from '../../../store/occupiedTimesSlice';
 
 interface MakeAppointmentDialogProps {
     open: boolean;
@@ -13,6 +15,8 @@ interface MakeAppointmentDialogProps {
 }
 
 const MakeAppointmentDialog: FC<MakeAppointmentDialogProps> = ({ open, setOpen, time, date }) => {
+    const dispatch = useDispatch();
+
     const formik = useFormik<Appointment>({
         initialValues: {
             name: '',
@@ -25,6 +29,7 @@ const MakeAppointmentDialog: FC<MakeAppointmentDialogProps> = ({ open, setOpen, 
         onSubmit: () => {
             // eslint-disable-next-line no-console
             console.log(formik.values);
+            dispatch(addSingleAppointment(formik.values));
             setOpen(false);
         },
     });
@@ -59,8 +64,8 @@ const MakeAppointmentDialog: FC<MakeAppointmentDialogProps> = ({ open, setOpen, 
                         <TextField
                             required
                             margin="dense"
-                            id="phone"
-                            name="phone"
+                            id="phoneNumber"
+                            name="phoneNumber"
                             label="Your Phone Number"
                             type="text"
                             fullWidth

@@ -1,7 +1,4 @@
 import dayjs, { Dayjs } from 'dayjs';
-import { timeSlots } from '../../../types/dateTypes';
-
-const occupiedDates = [dayjs('2022-04-18'), dayjs('2022-04-19')];
 
 interface OccupiedTime {
     date: Dayjs;
@@ -29,20 +26,6 @@ const occupiedTimes: OccupiedTime[] = [
         ],
     },
 ];
-
-const isDateOccupied = (date: Dayjs): boolean => occupiedDates.some((occupiedDate) => occupiedDate.isSame(date, 'day'));
-
-const areAllSlotsOccupied = (date: Dayjs): boolean => {
-    const occupiedDay = occupiedTimes.find((occupiedTime) => occupiedTime.date.isSame(date, 'day'));
-    return occupiedDay ? timeSlots.every((time) => occupiedDay.times.includes(time)) : false;
-};
-
-export const shouldDisableDate = (date: Dayjs): boolean => {
-    if (date.day() === 0) {
-        return true;
-    }
-    return isDateOccupied(date) || areAllSlotsOccupied(date);
-};
 
 export const isTimeOccupied = (date: Dayjs, time: string): boolean => {
     const timeAsDayjs = dayjs(time, 'HH:mm');
