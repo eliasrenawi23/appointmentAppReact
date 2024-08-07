@@ -1,120 +1,50 @@
-import React, { useState } from 'react';
-import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Button, Typography } from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
-import { useSelector } from 'react-redux';
-import {
-    Container,
-    CalendarContainer,
-    TimeSlotContainer,
-    TimeSlotGrid,
-    SchedulePageContainer,
-    SubmitButtonContainer,
-} from './styles';
+import React from 'react';
+import { Button, useMediaQuery, useTheme } from '@mui/material';
+import { Dayjs } from 'dayjs';
+import { Container, SchedulePageContainer, SubmitButtonContainer } from './styles';
 import MakeAppointmentDialog from '../../components/MakeAppointmentDialog/MakeAppointmentDialog';
-import { TimeSlotsType, timeSlots } from '../../../types/dateTypes';
-import { RootState } from '../../../store/store';
+import { TimeSlotsType } from '../../../types/dateTypes';
+import { useAppointments } from './useAppointment';
+import Calendar from './Calender';
+import TimeSlotSelection from './TimeSlotSelection';
+import { useHandlers } from './useHandlers';
 
 const AppointmentScheduler: React.FC = () => {
-    const [open, setOpen] = useState(false);
-    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs().add(1, 'day'));
-    const [selectedTime, setSelectedTime] = useState<TimeSlotsType | null>(null);
+    const { isTimeOccupied, isDateOccupied } = useAppointments();
 
-    const appointments = useSelector((state: RootState) => state.occupiedTimes.Appointments);
-    const fullDays = useSelector((state: RootState) => state.occupiedTimes.fullyOccupiedDates);
+    const { selectedDate, selectedTime, handleDateChange, handleAppointmentSubmit, setSelectedTime, setOpen, open } =
+        useHandlers();
+    const shouldDisableDate = (date: Dayjs) => date.day() === 0 || isDateOccupied(date);
 
-    const isTimeOccupied = (date: Dayjs, time: TimeSlotsType): boolean => {
-        const timeAsDayjs = dayjs(time, 'HH:mm');
-        if (date.isSame(dayjs(), 'day') && timeAsDayjs.isBefore(dayjs(), 'minute')) {
-            return true;
-        }
-        const day = appointments.get(date.format('DD/MM/YYYY'));
-
-        if (day) {
-            return day.has(time);
-        }
-        return false;
-    };
-
-    const isDateOccupied = (date: Dayjs): boolean => fullDays.has(date.format('DD/MM/YYYY'));
-
-    const shouldDisableDate2 = (date: Dayjs): boolean => {
-        if (date.day() === 0) {
-            return true;
-        }
-        return isDateOccupied(date);
-    };
-
-    const handleDateChange = (date: Dayjs | null) => {
-        setSelectedDate(date);
-        setSelectedTime(null); // Reset the selected time when the date changes
-    };
-
-    const handleTimeSlotClick = (time: TimeSlotsType) => {
-        setSelectedTime(time);
-    };
-
-    const handleAppointmentSubmit = () => {
-        if (selectedDate && selectedTime) setOpen(true);
-    };
-
-    const isMobile = window.innerWidth <= 600;
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     return (
         <SchedulePageContainer>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Container>
-                    <CalendarContainer>
-                        <StaticDatePicker
-                            orientation={isMobile ? 'portrait' : 'landscape'}
-                            openTo="day"
-                            disablePast
-                            value={selectedDate}
-                            onChange={handleDateChange}
-                            shouldDisableDate={shouldDisableDate2}
-                            slotProps={{
-                                actionBar: {
-                                    actions: ['today'],
-                                },
-                            }}
-                        />
-                    </CalendarContainer>
-                    <TimeSlotContainer>
-                        <Typography variant="h6">Select a Time Slot</Typography>
-                        <TimeSlotGrid>
-                            {timeSlots.map((time) => (
-                                <Button
-                                    key={time.toString()}
-                                    variant={selectedTime && selectedTime.match(time) ? 'contained' : 'outlined'}
-                                    onClick={() => handleTimeSlotClick(time)}
-                                    disabled={isTimeOccupied(selectedDate!, time)}
-                                >
-                                    {time}
-                                </Button>
-                            ))}
-                        </TimeSlotGrid>
-                        {selectedTime && selectedDate && (
-                            <Typography variant="body1" sx={{ mt: 2 }}>
-                                Selected Time and Date: {selectedTime}
-                                {'  '}
-                                {selectedDate.format('DD/MM/YYYY')}
-                            </Typography>
-                        )}
-                    </TimeSlotContainer>
-                </Container>
-                <SubmitButtonContainer>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleAppointmentSubmit}
-                        disabled={!selectedDate || !selectedTime}
-                    >
-                        Make an Appointment
-                    </Button>
-                </SubmitButtonContainer>
-            </LocalizationProvider>
+            <Container>
+                <Calendar
+                    selectedDate={selectedDate}
+                    handleDateChange={handleDateChange}
+                    shouldDisableDate={shouldDisableDate}
+                    isMobile={isMobile}
+                />
+                <TimeSlotSelection
+                    selectedDate={selectedDate}
+                    selectedTime={selectedTime}
+                    setSelectedTime={setSelectedTime}
+                    isTimeOccupied={isTimeOccupied}
+                />
+            </Container>
+            <SubmitButtonContainer>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleAppointmentSubmit}
+                    disabled={!selectedDate || !selectedTime}
+                >
+                    Make an Appointment
+                </Button>
+            </SubmitButtonContainer>
 
             {selectedDate && selectedTime && (
                 <MakeAppointmentDialog
