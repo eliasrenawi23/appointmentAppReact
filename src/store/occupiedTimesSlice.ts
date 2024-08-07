@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import dayjs from 'dayjs';
-import { Appointment, DateState, RangePayload, timeSlots } from '../types/dateTypes';
+import { Appointment, DateState, RangePayload, timeSlots, TimeSlotsType } from '../types/dateTypes';
 
 const initialState: DateState = {
     Appointments: new Map(),
@@ -43,24 +43,22 @@ const occupiedTimesSlice = createSlice({
         },
         addSingleAppointment: (state, action: PayloadAction<Appointment>) => {
             const { date, time, name, phoneNumber } = action.payload;
-            const formattedDate = dayjs(date).format('DD/MM/YYYY');
+            // const formattedDate = dayjs(date, 'DD/MM/YYYY').format('DD/MM/YYYY');
 
-            if (!state.Appointments.has(formattedDate)) {
-                state.Appointments.set(formattedDate, new Map());
+            if (!state.Appointments.has(date)) {
+                state.Appointments.set(date, new Map());
             }
 
-            const dailyAppointments = state.Appointments.get(formattedDate);
+            const dailyAppointments = state.Appointments.get(date);
 
-            if (dailyAppointments) {
-                if (!dailyAppointments.has(time)) {
-                    dailyAppointments.set(time, { name, phoneNumber });
-                }
+            if (dailyAppointments && !dailyAppointments.has(time as TimeSlotsType)) {
+                dailyAppointments.set(time as TimeSlotsType, { name, phoneNumber });
 
                 // Check if all time slots are occupied for the current date
                 const allTimesOccupied = timeSlots.every((timeSlot) => dailyAppointments.has(timeSlot));
 
                 if (allTimesOccupied) {
-                    state.fullyOccupiedDates.add(formattedDate);
+                    state.fullyOccupiedDates.add(date);
                 }
             }
         },
